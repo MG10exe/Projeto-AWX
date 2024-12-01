@@ -16,10 +16,19 @@ provider "google" {
   region = "us-east-1"
 }
 
+data "google_secret_manager_secret_version" "chave_publica" {
+  secret  = "chave-publica-awxServer"
+  project = var.gcp_project
+}
+
 resource "google_compute_instance" "maquina_teste" {
   name = "maquina-teste"
   machine_type = var.instance_type["medium"]
   zone = "us-central1-c"
+
+  metadata = {
+    ssh-keys = "matheusgandrade:${data.google_secret_manager_secret_version.chave_publica.secret_data}"
+    }
 
   boot_disk {
     initialize_params {
