@@ -46,12 +46,7 @@ resource "google_compute_instance" "maquina_teste" {
 
   tags = [
     "http-server",
-    "https-server",
-    "PublicIP=${google_compute_instance.maquina_teste.network_interface[0].access_config[0].nat_ip}"
+    "https-server"
   ]
-
-  output "instance_public_ip" {
-    value = aws_instance.example.public_ip
-  }
 
 }
