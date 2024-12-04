@@ -44,5 +44,10 @@ resource "google_compute_instance" "maquina_teste" {
     access_config {}
   }
 
-  tags = ["http-server", "https-server"]
+  tags = [
+    "http-server",
+    "https-server",
+    "PublicIP=${google_compute_instance.maquina_teste.network_interface[0].access_config[0].nat_ip}"
+  ]
+
 }
