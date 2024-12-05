@@ -1,4 +1,5 @@
 collections:
+  - name: amazon.aws
   - name: google.cloud
   - name: cloud.terraform
     source: https://github.com/ansible-collections/cloud.terraform.git
