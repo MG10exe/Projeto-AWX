@@ -18,6 +18,11 @@ provider "google" {
   region      = var.region
 }
 
+data "google_secret_manager_secret_version" "chave_publica" {
+  secret  = "chave-publica-awxServer"
+  project = var.gcp_project
+}
+
 # Rede (VPC e Sub-redes)
 resource "google_compute_network" "vpc" {
   name                    = "tutorial-vpc"
@@ -59,8 +64,8 @@ resource "google_compute_instance" "web" {
   }
 
   metadata = {
-    ssh-keys = "user:${var.ssh_public_key}"
-  }
+    ssh-keys = "matheusgandrade:${data.google_secret_manager_secret_version.chave_publica.secret_data}"
+    }
 }
 
 resource "google_compute_firewall" "allow_ssh" {
