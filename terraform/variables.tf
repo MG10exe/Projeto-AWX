@@ -1,9 +1,9 @@
 variable "gcp_credentials_path" {
-   type = string 
+  type = string
 }
 
 variable "gcp_project" {
-   type = string 
+  type = string
 }
 
 variable "region" {
@@ -32,42 +32,45 @@ variable "private_subnet_cidr_blocks" {
 
 variable "db_settings" {
   type = object({
-    tier            = string # Ex: db-f1-micro
-    engine          = string # Ex: MYSQL
-    engine_version  = string # Ex: MYSQL_8_0
-    database_name   = string
-    root_username   = string
-    root_password   = string
+    tier               = string
+    engine_version     = string
+    database_name      = string
+    root_username      = string
+    root_password      = string
     deletion_protection = bool
   })
   default = {
-    tier            = "db-f1-micro"
-    engine          = "MYSQL"
-    engine_version  = "MYSQL_8_0"
-    database_name   = "tutorial"
-    root_username   = "admin"
-    root_password   = "12345"
+    tier               = "db-f1-micro"
+    engine_version     = "MYSQL_8_0"
+    database_name      = "tutorial"
+    root_username      = "admin"
+    root_password      = "12345"
     deletion_protection = false
   }
 }
 
 variable "compute_settings" {
-    type = object({
-        machine_type = string
-        source_image_family = string
-        source_image_project = string
-        count = number
-    })
-    default = {
-        machine_type = "f1-micro"
-        source_image_family = "ubuntu-2004-lts"
-        source_image_project = "ubuntu-os-cloud"
-        count = 1
-    }
+  type = object({
+    machine_type        = string
+    source_image_family = string
+    source_image_project = string
+    count              = number
+  })
+  default = {
+    machine_type        = "f1-micro"
+    source_image_family = "ubuntu-2004-lts"
+    source_image_project = "ubuntu-os-cloud"
+    count              = 1
+  }
 }
 
 variable "my_ip" {
   description = "Seu endereço IP para acesso SSH"
   type        = string
   default     = "34.135.151.126"
+}
+
+variable "ssh_public_key" {
+  description = "Chave pública SSH"
+  type        = string
 }
