@@ -50,3 +50,33 @@ resource "google_compute_instance" "maquina_teste" {
   ]
 
 }
+
+resource "google_compute_instance" "maquina_teste_2" {
+  name = "maquina-teste-2"
+  machine_type = var.instance_type["medium"]
+  zone = "us-central1-c"
+
+  metadata = {
+    ssh-keys = "matheusgandrade:${data.google_secret_manager_secret_version.chave_publica.secret_data}"
+    }
+
+  boot_disk {
+    initialize_params {
+      image = "debian-11-bullseye-v20240110"
+      labels = {
+        my_label = "value"
+      }
+    }
+  }
+
+  network_interface {
+    network = "default"
+    access_config {}
+  }
+
+  tags = [
+    "http-server-2",
+    "https-server-2"
+  ]
+
+}
