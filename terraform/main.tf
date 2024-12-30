@@ -76,7 +76,7 @@ resource "google_sql_database_instance" "main_sql" {
     tier      = var.settings.database.tier
     disk_size = var.settings.database.storage_gb
     ip_configuration {
-      require_ssl = true
+      require_ssl = false
   }
 
     backup_configuration {
