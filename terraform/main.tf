@@ -29,6 +29,22 @@ resource "google_compute_network" "vpc" {
   auto_create_subnetworks = false
 }
 
+resource "google_service_networking_connection" "service_networking" {
+  network              = google_compute_network.vpc.id
+  service              = "services/servicenetworking.googleapis.com"
+  reserved_peering_ranges = [google_compute_address.service_networking_ip.name]
+
+  depends_on = [google_compute_network.vpc]
+}
+
+resource "google_compute_address" "service_networking_ip" {
+  name          = "service-networking-ip"
+  region        = var.region
+  address_type  = "INTERNAL"
+  purpose       = "VPC_PEERING"
+  address       = var.service_networking_range
+}
+
 # Sub-rede Pública
 resource "google_compute_subnetwork" "public" {
   count         = length(var.public_subnet_cidr_blocks)
