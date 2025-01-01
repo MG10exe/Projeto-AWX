@@ -29,17 +29,28 @@ resource "google_compute_network" "vpc" {
   auto_create_subnetworks = false
 }
 
+resource "google_project_service" "required_apis" {
+  for_each = toset([
+    "cloudresourcemanager.googleapis.com",
+    "servicenetworking.googleapis.com",
+    "sqladmin.googleapis.com",
+  ])
+
+  project = var.gcp_project
+  service = each.key
+}
+
 resource "google_project_service" "enable_service_networking" {
   service = "servicenetworking.googleapis.com"
   project = var.gcp_project
 }
 
 resource "google_service_networking_connection" "service_networking" {
-  network                = google_compute_network.vpc.self_link
-  service                = "servicenetworking.googleapis.com"
+  network                 = google_compute_network.vpc.self_link
+  service                 = "servicenetworking.googleapis.com"
   reserved_peering_ranges = [google_compute_address.service_networking_ip.name]
 
-  depends_on = [google_project_service.enable_service_networking]
+  depends_on = [google_project_service.required_apis]
 }
 
 resource "google_compute_address" "service_networking_ip" {
