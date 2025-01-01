@@ -42,7 +42,7 @@ resource "google_compute_address" "service_networking_ip" {
   region        = var.region
   address_type  = "INTERNAL"
   purpose       = "VPC_PEERING"
-  address       = var.service_networking_range
+  address       = "10.10.0.1"
 }
 
 # Sub-rede Pública
