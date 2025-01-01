@@ -112,7 +112,7 @@ resource "google_compute_router" "internet_gateway" {
 }
 
 resource "google_compute_router_nat" "nat" {
-  name                                 = "nat-${google_compute_subnetwork.public[count.index].name}"
+  name                                 = "nat-${google_compute_subnetwork.public[0].name}"
   router                               = google_compute_router.internet_gateway.name
   region                               = var.region
   nat_ip_allocate_option               = "AUTO_ONLY"
