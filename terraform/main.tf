@@ -40,9 +40,10 @@ resource "google_project_service" "required_apis" {
   service = each.key
 }
 
-resource "google_project_service" "enable_service_networking" {
-  service = "servicenetworking.googleapis.com"
+resource "google_project_service" "enable_cloudresourcemanager" {
   project = var.gcp_project
+  service = "cloudresourcemanager.googleapis.com"
+  disable_on_destroy = false
 }
 
 resource "google_service_networking_connection" "service_networking" {
