@@ -113,6 +113,13 @@ resource "google_sql_database_instance" "database" {
   }
 
   deletion_protection = var.db_settings.deletion_protection
+
+  ip_configuration {
+    ipv4_enabled    = false
+    private_network = "projects/${var.project_id}/global/networks/${var.network}"
+
+    allocated_ip_range = "10.0.101.5/24"
+  }
 }
 
 resource "google_sql_database" "database" {
