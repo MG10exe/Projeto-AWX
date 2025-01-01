@@ -31,16 +31,18 @@ resource "google_compute_network" "vpc" {
 
 # Sub-rede Pública
 resource "google_compute_subnetwork" "public" {
-  name          = "tutorial-public-subnet"
-  ip_cidr_range = var.public_subnet_cidr_blocks[0]
+  count         = length(var.public_subnet_cidr_blocks)
+  name          = "tutorial-public-subnet-${count.index}"
+  ip_cidr_range = var.public_subnet_cidr_blocks[count.index]
   region        = var.region
   network       = google_compute_network.vpc.id
 }
 
 # Sub-rede Privada
 resource "google_compute_subnetwork" "private" {
-  name          = "tutorial-private-subnet"
-  ip_cidr_range = var.private_subnet_cidr_blocks[0]
+  count         = length(var.private_subnet_cidr_blocks)
+  name          = "tutorial-private-subnet-${count.index}"
+  ip_cidr_range = var.private_subnet_cidr_blocks[count.index]
   region        = var.region
   network       = google_compute_network.vpc.id
 }
