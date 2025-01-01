@@ -31,7 +31,7 @@ resource "google_compute_network" "vpc" {
 
 resource "google_service_networking_connection" "service_networking" {
   network              = google_compute_network.vpc.id
-  service              = "servicenetworking.googleapis.com"
+  service              = "services/servicenetworking.googleapis.com"
   reserved_peering_ranges = [google_compute_address.service_networking_ip.name]
 
   depends_on = [google_compute_network.vpc]
@@ -41,7 +41,7 @@ resource "google_compute_address" "service_networking_ip" {
   name          = "service-networking-ip"
   region        = var.region
   address_type  = "INTERNAL"
-  address       = "10.10.0.1"
+  address       = "10.0.1.1"
 }
 
 # Sub-rede Pública
