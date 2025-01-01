@@ -7,6 +7,11 @@
       become: yes
 
   tasks:
+    - name: "Atualiza cache do APT"
+      apt:
+        update_cache: yes
+      become: yes
+
     - name: "Instala pacotes necessários"
       apt:
         name: "{{ item }}"
@@ -20,6 +25,12 @@
         - php-curl
         - unzip
 
+    - name: "Habilita módulo rewrite no Apache"
+      command: a2enmod rewrite
+      become: yes
+      notify:
+        - "restart apache"
+
     - name: "Fazendo download do WordPress"
       get_url:
         url: "https://br.wordpress.org/latest-pt_BR.tar.gz"
@@ -30,6 +41,16 @@
         src: "/tmp/wordpress.tar.gz"
         dest: "/var/www"
         remote_src: yes
+      become: yes
+
+    - name: "Define permissões e proprietário do WordPress"
+      file:
+        path: "/var/www/wordpress"
+        state: directory
+        owner: www-data
+        group: www-data
+        mode: "0755"
+        recurse: yes
       become: yes
 
     - name: "Copia o arquivo de configuração do WordPress"
