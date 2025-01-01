@@ -29,18 +29,18 @@ resource "google_compute_network" "vpc" {
   auto_create_subnetworks = false
 }
 
+# Sub-rede Pública
 resource "google_compute_subnetwork" "public" {
-  count         = length(var.public_subnet_cidr_blocks)
-  name          = "tutorial-public-subnet-${count.index}"
-  ip_cidr_range = var.public_subnet_cidr_blocks[count.index]
+  name          = "tutorial-public-subnet"
+  ip_cidr_range = var.public_subnet_cidr_blocks[0]
   region        = var.region
   network       = google_compute_network.vpc.id
 }
 
+# Sub-rede Privada
 resource "google_compute_subnetwork" "private" {
-  count         = length(var.private_subnet_cidr_blocks)
-  name          = "tutorial-private-subnet-${count.index}"
-  ip_cidr_range = var.private_subnet_cidr_blocks[count.index]
+  name          = "tutorial-private-subnet"
+  ip_cidr_range = var.private_subnet_cidr_blocks[0]
   region        = var.region
   network       = google_compute_network.vpc.id
 }
@@ -86,7 +86,7 @@ resource "google_compute_firewall" "allow_http" {
 
   allow {
     protocol = "tcp"
-    ports    = ["80"]
+    ports    = ["80", "443"]
   }
   source_ranges = ["0.0.0.0/0"]
 }
@@ -99,7 +99,26 @@ resource "google_compute_firewall" "allow_db" {
     protocol = "tcp"
     ports    = ["3306"]
   }
-  source_ranges = ["10.0.0.0/16"]
+  source_ranges = [google_compute_subnetwork.public.ip_cidr_range]
+}
+
+# Rota para Gateway de Internet na sub-rede pública
+resource "google_compute_router" "internet_gateway" {
+  name    = "tutorial-router"
+  network = google_compute_network.vpc.id
+  region  = var.region
+}
+
+resource "google_compute_router_nat" "nat" {
+  name                                 = "nat-config"
+  router                               = google_compute_router.internet_gateway.name
+  region                               = var.region
+  nat_ip_allocate_option               = "AUTO_ONLY"
+  source_subnetwork_ip_ranges_to_nat   = "LIST_OF_SUBNETWORKS"
+  subnetwork {
+    name                    = google_compute_subnetwork.public.name
+    source_ip_ranges_to_nat = ["ALL_IP_RANGES"]
+  }
 }
 
 # Banco de Dados
@@ -110,6 +129,10 @@ resource "google_sql_database_instance" "database" {
 
   settings {
     tier = var.db_settings.tier
+    ip_configuration {
+      ipv4_enabled    = false
+      private_network = google_compute_network.vpc.id
+    }
   }
 
   deletion_protection = var.db_settings.deletion_protection

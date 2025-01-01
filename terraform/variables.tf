@@ -27,7 +27,7 @@ variable "public_subnet_cidr_blocks" {
 variable "private_subnet_cidr_blocks" {
   description = "CIDR blocks para sub-redes privadas"
   type        = list(string)
-  default     = ["10.0.101.0/24", "10.0.102.0/24"]
+  default     = ["10.0.101.0/24"]
 }
 
 variable "db_settings" {
