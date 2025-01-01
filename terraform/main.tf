@@ -29,6 +29,12 @@ resource "google_compute_network" "vpc" {
   auto_create_subnetworks = false
 }
 
+resource "google_service_networking_connection" "service_networking" {
+  network                 = google_compute_network.vpc.self_link
+  service                 = "servicenetworking.googleapis.com"
+  reserved_peering_ranges = [google_compute_address.service_networking_ip.name]
+}
+
 resource "google_compute_address" "service_networking_ip" {
   name         = "service-networking-ip"
   address_type = "INTERNAL"
