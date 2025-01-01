@@ -101,7 +101,7 @@ resource "google_compute_firewall" "allow_db" {
     protocol = "tcp"
     ports    = ["3306"]
   }
-  source_ranges = [google_compute_subnetwork.public[count.index].ip_cidr_range]
+  source_ranges = [google_compute_subnetwork.public[0].ip_cidr_range]
 }
 
 # Rota para Gateway de Internet na sub-rede pública
@@ -118,7 +118,7 @@ resource "google_compute_router_nat" "nat" {
   nat_ip_allocate_option               = "AUTO_ONLY"
   source_subnetwork_ip_ranges_to_nat   = "LIST_OF_SUBNETWORKS"
   subnetwork {
-    name                    = google_compute_subnetwork.public.name
+    name                    = google_compute_subnetwork.public[0].name
     source_ip_ranges_to_nat = ["ALL_IP_RANGES"]
   }
 }
