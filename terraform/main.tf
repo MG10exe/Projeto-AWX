@@ -41,7 +41,6 @@ resource "google_compute_address" "service_networking_ip" {
   name          = "service-networking-ip"
   region        = var.region
   address_type  = "INTERNAL"
-  purpose       = "VPC_PEERING"
   address       = "10.10.0.1"
 }
 
