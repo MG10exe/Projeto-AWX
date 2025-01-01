@@ -59,15 +59,15 @@
       notify:
         - "restart apache"
 
-    - name: "Copiando tema personalizado do WordPress"
-      copy:
-        src: "thema/generatepress.3.0.3.zip"
-        dest: "/tmp/generatepress.3.0.3.zip"
-      become: yes
+  #  - name: "Copiando tema personalizado do WordPress"
+  #    copy:
+ #       src: "thema/generatepress.3.0.3.zip"
+ #       dest: "/tmp/generatepress.3.0.3.zip"
+ #     become: yes
 
-    - name: "Descompactando tema na pasta do WordPress"
-      unarchive:
-        src: "/tmp/generatepress.3.0.3.zip"
-        dest: "/var/www/wordpress/wp-content/themes/"
-        remote_src: yes
-      become: yes
+#    - name: "Descompactando tema na pasta do WordPress"
+#      unarchive:
+#        src: "/tmp/generatepress.3.0.3.zip"
+#        dest: "/var/www/wordpress/wp-content/themes/"
+#        remote_src: yes
+#      become: yes
