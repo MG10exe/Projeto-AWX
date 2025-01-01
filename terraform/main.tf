@@ -38,7 +38,6 @@ resource "google_service_networking_connection" "service_networking" {
 resource "google_compute_address" "service_networking_ip" {
   name         = "service-networking-ip"
   address_type = "INTERNAL"
-  purpose      = "VPC_PEERING"
   prefix_length = 24 # Tamanho do bloco reservado
   network      = google_compute_network.vpc.self_link
   region       = var.region
