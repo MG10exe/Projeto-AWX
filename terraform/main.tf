@@ -35,11 +35,16 @@ resource "google_service_networking_connection" "service_networking" {
   reserved_peering_ranges = [google_compute_address.service_networking_ip.name]
 }
 
+resource "google_service_networking_connection" "private_vpc_connection" {
+  network                 = google_compute_network.vpc.id # ou self_link, dependendo da sua versão do provider
+  service                 = "servicenetworking.googleapis.com"
+  reserved_peering_ranges = [google_compute_address.service_networking_ip.name]
+}
+
 resource "google_compute_address" "service_networking_ip" {
   name         = "service-networking-ip"
   address_type = "INTERNAL"
-  prefix_length = 24 # Tamanho do bloco reservado
-  network      = google_compute_network.vpc.self_link
+  network      = google_compute_network.vpc.id
   region       = var.region
 }
 
