@@ -33,8 +33,8 @@ resource "google_compute_network" "vpc" {
 resource "google_compute_subnetwork" "default" {
   name          = "my-subnet"
   ip_cidr_range = "10.0.0.0/16"
-  region        = "us-central1"
-  network       = google_compute_network.default.id
+  region        = var.region
+  network       = google_compute_network.vpc.id
 }
 
 resource "google_compute_address" "internal_with_subnet_and_address" {
@@ -186,7 +186,7 @@ resource "google_sql_database_instance" "database" {
   deletion_protection = var.db_settings.deletion_protection
 
   depends_on = [
-    google_service_networking_connection.service_networking
+    google_service_networking_connection.default
   ]
 }
 
