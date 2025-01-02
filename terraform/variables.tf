@@ -18,11 +18,11 @@ variable "vpc_cidr_block" {
   default     = "10.0.0.0/16"
 }
 
-variable "service_networking_range" {
-  description = "The IP range for service networking in the VPC"
-  type        = string
-  default     = "10.10.0.0/28" 
-}
+#variable "service_networking_range" {
+#  description = "The IP range for service networking in the VPC"
+#  type        = string
+#  default     = "10.10.0.0/28" 
+#}
 
 variable "public_subnet_cidr_blocks" {
   description = "CIDR blocks para sub-redes públicas"
