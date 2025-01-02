@@ -195,3 +195,25 @@ resource "google_sql_user" "users" {
   instance = google_sql_database_instance.database.name
   password = var.db_settings.root_password
 }
+
+resource "google_dns_managed_zone" "private_zone" {
+  name        = "private-dns-zone"
+  dns_name    = "internal."
+  description = "Zona DNS privada para o banco de dados"
+  visibility  = "private"
+
+  private_visibility_config {
+    networks {
+      network_url = google_compute_network.vpc.self_link
+    }
+  }
+}
+
+resource "google_dns_record_set" "db_dns" {
+  name         = "database.internal."
+  type         = "A"
+  ttl          = 300
+  managed_zone = google_dns_managed_zone.private_zone.name
+
+  rrdatas = [google_sql_database_instance.database.private_ip_address]
+}
