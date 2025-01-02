@@ -32,7 +32,7 @@ resource "google_compute_network" "vpc" {
 
 resource "google_compute_subnetwork" "default" {
   name          = "my-subnet"
-  ip_cidr_range = "10.0.200./24"
+  ip_cidr_range = "10.1.0.0/16"
   region        = var.region
   network       = google_compute_network.vpc.id
 }
@@ -41,13 +41,8 @@ resource "google_compute_address" "internal_with_subnet_and_address" {
   name         = "my-internal-address"
   subnetwork   = google_compute_subnetwork.default.id
   address_type = "INTERNAL"
-  address      = "10.0.200.200"
-  region       = "us-central1"
-}
-
-# Create a VPC network
-resource "google_compute_network" "peering_network" {
-  name = "peering-network"
+  address      = "10.1.0.10"
+  region       = var.region
 }
 
 # Create an IP address
@@ -56,24 +51,24 @@ resource "google_compute_global_address" "private_ip_alloc" {
   purpose       = "VPC_PEERING"
   address_type  = "INTERNAL"
   prefix_length = 16
-  network       = google_compute_network.peering_network.id
+  network       = google_compute_network.vpc.id
 }
 
 # Create a private connection
 resource "google_service_networking_connection" "default" {
-  network                 = google_compute_network.peering_network.id
+  network                 = google_compute_network.vpc.id
   service                 = "servicenetworking.googleapis.com"
   reserved_peering_ranges = [google_compute_global_address.private_ip_alloc.name]
 }
 
 # (Optional) Import or export custom routes
-resource "google_compute_network_peering_routes_config" "peering_routes" {
-  peering = google_service_networking_connection.default.peering
-  network = google_compute_network.peering_network.name
-
-  import_custom_routes = true
-  export_custom_routes = true
-}
+#resource "google_compute_network_peering_routes_config" "peering_routes" {
+#  peering = google_service_networking_connection.default.peering
+#  network = google_compute_network.peering_network.name
+#
+#  import_custom_routes = true
+#  export_custom_routes = true
+#}
 
 # Sub-rede Pública
 resource "google_compute_subnetwork" "public" {
