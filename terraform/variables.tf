@@ -12,11 +12,11 @@ variable "region" {
   default     = "us-central1"
 }
 
-variable "vpc_cidr_block" {
-  description = "CIDR block para a VPC"
-  type        = string
-  default     = "10.0.0.0/16"
-}
+#variable "vpc_cidr_block" {
+#  description = "CIDR block para a VPC"
+#  type        = string
+#  default     = "10.0.0.0/16"
+#}
 
 #variable "service_networking_range" {
 #  description = "The IP range for service networking in the VPC"
