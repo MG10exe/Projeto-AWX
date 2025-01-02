@@ -45,7 +45,7 @@ resource "google_compute_address" "service_networking_ip" {
   address_type = "INTERNAL"
   subnetwork = google_compute_subnetwork.private[0].self_link
   region       = var.region
-  address = "10.0.101.10"
+  #address = "10.0.101.10"
 
   depends_on = [google_compute_subnetwork.private]
 }
