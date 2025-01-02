@@ -77,7 +77,14 @@ resource "google_compute_subnetwork" "public" {
   name          = "tutorial-public-subnet-${count.index}"
   ip_cidr_range = var.public_subnet_cidr_blocks[count.index]
   region        = var.region
-  network       = google_compute_network.vpc.self_link
+  network       = google_compute_network.vpc.id
+}
+
+resource "google_compute_route" "default_internet_gateway" {
+  name       = "default-route-public"
+  network    = google_compute_network.vpc.id
+  dest_range = "0.0.0.0/0"
+  next_hop_gateway = "default-internet-gateway"
 }
 
 # Sub-rede Privada
@@ -86,7 +93,7 @@ resource "google_compute_subnetwork" "private" {
   name          = "tutorial-private-subnet-${count.index}"
   ip_cidr_range = var.private_subnet_cidr_blocks[count.index]
   region        = var.region
-  network       = google_compute_network.vpc.self_link
+  network       = google_compute_network.vpc.id
 }
 
 # Compute (Instâncias e Firewall)
@@ -110,6 +117,8 @@ resource "google_compute_instance" "web" {
   metadata = {
     ssh-keys = "matheusgandrade:${data.google_secret_manager_secret_version.chave_publica.secret_data}"
     }
+  
+  tags = ["web-server"]
 }
 
 resource "google_compute_firewall" "allow_ssh" {
@@ -175,7 +184,7 @@ resource "google_sql_database_instance" "database" {
     tier = var.db_settings.tier
     ip_configuration {
       ipv4_enabled    = false
-      private_network = google_compute_network.vpc.self_link
+      private_network = google_compute_network.vpc.id
     }
   }
 
@@ -205,7 +214,7 @@ resource "google_dns_managed_zone" "private_zone" {
 
   private_visibility_config {
     networks {
-      network_url = google_compute_network.vpc.self_link
+      network_url = google_compute_network.vpc.id
     }
   }
 }
