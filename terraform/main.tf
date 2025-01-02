@@ -32,7 +32,7 @@ resource "google_compute_network" "vpc" {
 
 resource "google_compute_subnetwork" "default" {
   name          = "my-subnet"
-  ip_cidr_range = "10.0.0.0/16"
+  ip_cidr_range = "10.0.200./24"
   region        = var.region
   network       = google_compute_network.vpc.id
 }
@@ -41,7 +41,7 @@ resource "google_compute_address" "internal_with_subnet_and_address" {
   name         = "my-internal-address"
   subnetwork   = google_compute_subnetwork.default.id
   address_type = "INTERNAL"
-  address      = "10.0.42.42"
+  address      = "10.0.200.200"
   region       = "us-central1"
 }
 
