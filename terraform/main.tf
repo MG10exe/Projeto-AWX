@@ -30,25 +30,49 @@ resource "google_compute_network" "vpc" {
   routing_mode = "GLOBAL"
 }
 
-resource "google_compute_address" "service_networking_ip" {
-  name         = "service-networking-ip"
-  address_type = "INTERNAL"
-  subnetwork = google_compute_subnetwork.private[0].self_link
-  region       = var.region
-  address = cidrsubnet(var.service_networking_range, 8, 0)
-
-  depends_on = [google_compute_subnetwork.private]
+resource "google_compute_subnetwork" "default" {
+  name          = "my-subnet"
+  ip_cidr_range = "10.0.0.0/16"
+  region        = "us-central1"
+  network       = google_compute_network.default.id
 }
 
-resource "google_service_networking_connection" "service_networking" {
-  network                 = google_compute_network.vpc.self_link
-  service                 = "servicenetworking.googleapis.com"
-  reserved_peering_ranges = [google_compute_address.service_networking_ip.name]
+resource "google_compute_address" "internal_with_subnet_and_address" {
+  name         = "my-internal-address"
+  subnetwork   = google_compute_subnetwork.default.id
+  address_type = "INTERNAL"
+  address      = "10.0.42.42"
+  region       = "us-central1"
+}
 
-  depends_on = [
-    google_compute_address.service_networking_ip,
-    google_compute_subnetwork.private
-  ]
+# Create a VPC network
+resource "google_compute_network" "peering_network" {
+  name = "peering-network"
+}
+
+# Create an IP address
+resource "google_compute_global_address" "private_ip_alloc" {
+  name          = "private-ip-alloc"
+  purpose       = "VPC_PEERING"
+  address_type  = "INTERNAL"
+  prefix_length = 16
+  network       = google_compute_network.peering_network.id
+}
+
+# Create a private connection
+resource "google_service_networking_connection" "default" {
+  network                 = google_compute_network.peering_network.id
+  service                 = "servicenetworking.googleapis.com"
+  reserved_peering_ranges = [google_compute_global_address.private_ip_alloc.name]
+}
+
+# (Optional) Import or export custom routes
+resource "google_compute_network_peering_routes_config" "peering_routes" {
+  peering = google_service_networking_connection.default.peering
+  network = google_compute_network.peering_network.name
+
+  import_custom_routes = true
+  export_custom_routes = true
 }
 
 # Sub-rede Pública
