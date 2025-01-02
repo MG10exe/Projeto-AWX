@@ -35,7 +35,8 @@ resource "google_service_networking_connection" "service_networking" {
   reserved_peering_ranges = [google_compute_address.service_networking_ip.name]
 
   depends_on = [
-    google_compute_address.service_networking_ip
+    google_compute_address.service_networking_ip,
+    google_compute_subnetwork.private
   ]
 }
 
