@@ -33,18 +33,16 @@ resource "google_service_networking_connection" "service_networking" {
   network                 = google_compute_network.vpc.self_link
   service                 = "servicenetworking.googleapis.com"
   reserved_peering_ranges = [google_compute_address.service_networking_ip.name]
-}
 
-resource "google_service_networking_connection" "private_vpc_connection" {
-  network                 = google_compute_network.vpc.id # ou self_link, dependendo da sua versão do provider
-  service                 = "servicenetworking.googleapis.com"
-  reserved_peering_ranges = [google_compute_address.service_networking_ip.name]
+  depends_on = [
+    google_compute_address.service_networking_ip
+  ]
 }
 
 resource "google_compute_address" "service_networking_ip" {
   name         = "service-networking-ip"
   address_type = "INTERNAL"
-  network      = google_compute_network.vpc.id
+  subnetwork = google_compute_subnetwork.private[0].self_link
   region       = var.region
 }
 
@@ -54,7 +52,7 @@ resource "google_compute_subnetwork" "public" {
   name          = "tutorial-public-subnet-${count.index}"
   ip_cidr_range = var.public_subnet_cidr_blocks[count.index]
   region        = var.region
-  network       = google_compute_network.vpc.id
+  network       = google_compute_network.vpc.self_link
 }
 
 # Sub-rede Privada
@@ -63,7 +61,7 @@ resource "google_compute_subnetwork" "private" {
   name          = "tutorial-private-subnet-${count.index}"
   ip_cidr_range = var.private_subnet_cidr_blocks[count.index]
   region        = var.region
-  network       = google_compute_network.vpc.id
+  network       = google_compute_network.vpc.self_link
 }
 
 # Compute (Instâncias e Firewall)
@@ -152,12 +150,15 @@ resource "google_sql_database_instance" "database" {
     tier = var.db_settings.tier
     ip_configuration {
       ipv4_enabled    = false
-      private_network = google_compute_network.vpc.id
+      private_network = google_compute_network.vpc.self_link
     }
   }
 
   deletion_protection = var.db_settings.deletion_protection
 
+  depends_on = [
+    google_service_networking_connection.service_networking
+  ]
 }
 
 resource "google_sql_database" "database" {
