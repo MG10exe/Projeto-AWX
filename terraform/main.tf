@@ -27,6 +27,17 @@ data "google_secret_manager_secret_version" "chave_publica" {
 resource "google_compute_network" "vpc" {
   name                    = "tutorial-vpc"
   auto_create_subnetworks = false
+  routing_mode = "GLOBAL"
+}
+
+resource "google_compute_address" "service_networking_ip" {
+  name         = "service-networking-ip"
+  address_type = "INTERNAL"
+  subnetwork = google_compute_subnetwork.private[0].self_link
+  region       = var.region
+  address = cidrsubnet(var.service_networking_range, 8, 0)
+
+  depends_on = [google_compute_subnetwork.private]
 }
 
 resource "google_service_networking_connection" "service_networking" {
@@ -38,16 +49,6 @@ resource "google_service_networking_connection" "service_networking" {
     google_compute_address.service_networking_ip,
     google_compute_subnetwork.private
   ]
-}
-
-resource "google_compute_address" "service_networking_ip" {
-  name         = "service-networking-ip"
-  address_type = "INTERNAL"
-  subnetwork = google_compute_subnetwork.private[0].self_link
-  region       = var.region
-  address = "10.0.101.250"
-
-  depends_on = [google_compute_subnetwork.private]
 }
 
 # Sub-rede Pública
