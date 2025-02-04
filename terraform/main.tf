@@ -62,15 +62,6 @@ resource "google_service_networking_connection" "default" {
 
 }
 
-# (Optional) Import or export custom routes
-#resource "google_compute_network_peering_routes_config" "peering_routes" {
-#  peering = google_service_networking_connection.default.peering
-#  network = google_compute_network.peering_network.name
-#
-#  import_custom_routes = true
-#  export_custom_routes = true
-#}
-
 # Sub-rede Pública
 resource "google_compute_subnetwork" "public" {
   count         = length(var.public_subnet_cidr_blocks)
@@ -115,7 +106,7 @@ resource "google_compute_instance" "web" {
   }
 
   metadata = {
-    ssh-keys = "matheusgandrade:${data.google_secret_manager_secret_version.chave_publica.secret_data}"
+    ssh-keys = "root:${data.google_secret_manager_secret_version.chave_publica.secret_data}"
     }
   
   tags = ["web-server"]
