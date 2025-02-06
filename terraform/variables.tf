@@ -51,7 +51,7 @@ variable "compute_settings" {
     count              = number
   })
   default = {
-    machine_type        = "f1-micro"
+    machine_type        = "e2-micro"
     source_image_family = "ubuntu-2004-lts"
     source_image_project = "ubuntu-os-cloud"
     count              = 1
