@@ -14,21 +14,6 @@ provider "google" {
   region      = var.region
 }
 
-resource "google_project_service" "cloud_resourcemanager" {
-  project = "seu-projeto-id"
-  service = "cloudresourcemanager.googleapis.com"
-}
-
-resource "google_project_service" "cloud_dns" {
-  project = "seu-projeto-id"
-  service = "dns.googleapis.com"
-}
-
-resource "google_project_service" "servicenetworking" {
-  project = "seu-projeto-id"
-  service = "servicenetworking.googleapis.com"
-}
-
 data "google_secret_manager_secret_version" "chave_publica" {
   secret  = "chave-publica-servidor-awx"
   project = var.gcp_project
