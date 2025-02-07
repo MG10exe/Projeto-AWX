@@ -21,7 +21,7 @@ data "google_secret_manager_secret_version" "chave_publica" {
 
 # Rede (VPC e Sub-redes)
 resource "google_compute_network" "vpc" {
-  name                    = "tutorial-vpc"
+  name                    = "vpc-ambiente-wordpress"
   auto_create_subnetworks = false
   routing_mode = "GLOBAL"
 }
@@ -79,7 +79,7 @@ resource "google_compute_route" "default_internet_gateway" {
 # Sub-rede Privada
 resource "google_compute_subnetwork" "private" {
   count         = length(var.private_subnet_cidr_blocks)
-  name          = "tutorial-private-subnet-${count.index}"
+  name          = "private-subnet-${count.index}"
   ip_cidr_range = var.private_subnet_cidr_blocks[count.index]
   region        = var.region
   network       = google_compute_network.vpc.id
@@ -88,7 +88,7 @@ resource "google_compute_subnetwork" "private" {
 # Compute (Instâncias e Firewall)
 resource "google_compute_instance" "web" {
   count         = var.compute_settings.count
-  name          = "tutorial-web-${terraform.workspace}-${count.index}"
+  name          = "servidor-web-${terraform.workspace}-${count.index}"
   machine_type  = var.compute_settings.machine_type
   zone          = "${var.region}-a"
 
@@ -146,7 +146,7 @@ resource "google_compute_firewall" "allow_db" {
 
 # Rota para Gateway de Internet na sub-rede pública
 resource "google_compute_router" "internet_gateway" {
-  name    = "tutorial-router"
+  name    = "router"
   network = google_compute_network.vpc.id
   region  = var.region
 }
@@ -165,7 +165,7 @@ resource "google_compute_router_nat" "nat" {
 
 # Banco de Dados
 resource "google_sql_database_instance" "database" {
-  name             = "tutorial-database"
+  name             = "worpress-database"
   region           = var.region
   database_version = var.db_settings.engine_version
 
