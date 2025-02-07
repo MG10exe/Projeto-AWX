@@ -48,8 +48,6 @@ resource "google_compute_global_address" "private_ip_alloc" {
   address_type  = "INTERNAL"
   prefix_length = 16
   network       = google_compute_network.vpc.id
-
-  depends_on = [google_service_networking_connection.default]
 }
 
 # Create a private connection
