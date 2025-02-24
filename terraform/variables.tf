@@ -38,7 +38,6 @@ variable "db_settings" {
     engine_version     = "MYSQL_8_0"
     database_name      = "ifpb"
     root_username      = "admin"
-    root_password      = "12345"
     deletion_protection = false
   }
 }
