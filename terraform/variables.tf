@@ -30,7 +30,6 @@ variable "db_settings" {
     engine_version     = string
     database_name      = string
     root_username      = string
-    root_password      = string
     deletion_protection = bool
   })
   default = {
