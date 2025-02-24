@@ -19,6 +19,11 @@ data "google_secret_manager_secret_version" "chave_publica" {
   project = var.gcp_project
 }
 
+data "google_secret_manager_secret_version" "db_root_password" {
+  secret  = "db-root-password"
+  project = var.gcp_project
+}
+
 # Rede (VPC e Sub-redes)
 resource "google_compute_network" "vpc" {
   name                    = "vpc-ambiente-wordpress"
@@ -192,7 +197,7 @@ resource "google_sql_database" "database" {
 resource "google_sql_user" "users" {
   name     = var.db_settings.root_username
   instance = google_sql_database_instance.database.name
-  password = var.db_settings.root_password
+  password = data.google_secret_manager_secret_version.db_root_password.secret_data
 }
 
 resource "google_dns_managed_zone" "private_zone" {
